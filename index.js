@@ -1,11 +1,11 @@
-const app = require("./app")
-require('dotenv').config()
+const app = require("./app");
+require("dotenv").config();
+const connectDB = require("./src/config/db");
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3001;
 
-// const databaseConnect = require("./dbConnect");
-// databaseConnect.connectDb();
+connectDB();
 
 app.listen(process.env.PORT, () => {
-    console.log("listening on port ",port)
-})
+  console.log("listening on port ", port);
+});
