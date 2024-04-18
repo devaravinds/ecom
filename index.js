@@ -1,6 +1,9 @@
 const app = require("./app");
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
+const connectDB = require("./src/config/db");
+const logger = require("./src/config/logger");
+
 require("dotenv").config();
 
 const port = process.env.PORT || 3000;
@@ -30,10 +33,9 @@ const swaggerOptions = {
 
 const specs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-
-const connectDB = require("./src/config/db");
 connectDB();
 
 app.listen(process.env.PORT, () => {
-  console.log("Listening on port ", port);
+  logger.info(`Listening on port: ${port}`)
+  logger.info(`Documentation is available on : http://localhost:${port}/api-docs/`)
 });
