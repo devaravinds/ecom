@@ -7,8 +7,8 @@ const signUpValidation = [
     .isEmail()
     .withMessage("Not a valid e-mail address")
     .escape(),
-  body("name").notEmpty().escape(),
-  body("password").isLength({ min: 8 }),
+  body("name").notEmpty().withMessage("Name is required").escape(),
+  body("password").notEmpty().withMessage("Password is required").isLength({ min: 8 }).withMessage("Password should be minimum 8 characters").escape(),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
