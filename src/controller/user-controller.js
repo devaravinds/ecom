@@ -2,23 +2,20 @@ const User = require("../models/user-model");
 const roles = require("../enum/roles");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const logger = require("../config/logger");
+const { createUser } = require("../helper/user-helper")
 
 const signup = async (req, res) => {
-  const newUser = new User({
-    email: req?.body?.email,
-    name: req?.body?.name,
-    password: req?.body?.password,
-    role: roles.USER,
-  });
-
+  const newUser = createUser(req, roles.USER)
   try {
     const createdUser = await newUser.save();
+    logger.info(`New user account created with Id: ${createUser._id}`)
     return res.status(201).json({
       userId: createdUser._id,
       message: "Account successfully created",
     });
   } catch (err) {
-    console.log(err.message);
+    logger.error(`Error: ${error.message}`)
     return res.status(500).json({
       message: err.message,
     });
@@ -38,14 +35,14 @@ const login = async (req, res) => {
 
   if(isMatch){
     let token = jwt.sign({
-      user_id: user._id,
+      userId: user._id,
       role: user.role,
       email: user.email,
       name: user.firstName,
     }, 
     process.env.JWT_SECRET, 
     {
-      expiresIn: "5 days",
+      expiresIn: process.env.JWT_EXPIRY,
     });
 
     let result = {
@@ -55,8 +52,9 @@ const login = async (req, res) => {
         name: user.name,
       },
       token: token,
-      expiresIn: "5 days",
+      expiresIn: process.env.JWT_EXPIRY,
     };
+    logger.info(`User ${user._id} has logged in`)
     return res.status(200).json({
       data:result,
       message: "Login was successfull"
@@ -67,10 +65,29 @@ const login = async (req, res) => {
       message: "Incorrect credentials, Login Failed",
     })
   }
+}
 
+const createAdmin = async(req, res) => {
+  const newAdmin = createUser(req, roles.ADMIN)
+  try {
+    const createdAdmin = await newAdmin.save();
+    logger.info(`New admin account created with Id: ${createUser._id}`)
+    return res.status(201).json({
+      userId: createdAdmin._id,
+      message: "Admin created successfully"
+    })
+  }
+  catch(error){
+    logger.error(`Error: ${error.message}`)
+    return res.status(500).json({
+      message: "An error occured!",
+      error: error.message
+    })
+  }
 }
 
 module.exports = {
   signup,
-  login
+  login,
+  createAdmin
 };
