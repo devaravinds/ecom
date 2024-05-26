@@ -1,19 +1,7 @@
 const router = require("express").Router();
-const {
-  signup,
-  login,
-  createAdmin,
-  changePassword,
-} = require("../controller/user-controller");
-const {
-  ensureAuthenticated,
-  ensureAuthorized,
-} = require("../middleware/user-middleware");
-const {
-  signUpValidation,
-  loginValidation,
-  changePasswordValidation,
-} = require("../middleware/validations/user-validator");
+const { signup, login, createAdmin, changePassword } = require("../controller/user-controller");
+const { ensureAuthenticated, ensureAuthorized } = require("../middleware/user-middleware");
+const { signUpValidation, loginValidation, changePasswordValidation} = require("../middleware/validations/user-validator");
 const roles = require("../enum/roles");
 
 router.post("/signup", signUpValidation, signup);
