@@ -102,9 +102,38 @@ const changePassword = async (req, res) => {
   });
 };
 
+const deleteProfile = async(req, res) => {
+  const user = req.user;
+  if(user.role == roles.SUPER_ADMIN){
+    res.status(409).json({
+      message:"Super Admin cannot be deleted"
+    })
+  }
+  await User.deleteOne({_id: user._id});
+  return res.status(200).json({
+    message:`Profile with id ${user._id} has been deleted`
+  })
+}
+
+const deleteAdmin = async(req, res) => {
+  const adminId = req?.headers?.id;
+  const admin = await User.findById(adminId);
+  if(!admin || admin.role != roles.ADMIN){
+    return res.status(409).json({
+      message:"Admin id is invalid"
+    })
+  }
+  await User.deleteOne({_id: adminId});
+  return res.status(200).json({
+    message: `Admin with id ${adminId} has been deleted`
+  })
+}
+
 module.exports = {
   signup,
   login,
   createAdmin,
   changePassword,
+  deleteProfile,
+  deleteAdmin
 };

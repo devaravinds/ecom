@@ -2,13 +2,13 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user-model");
 
 const ensureAuthenticated = async (req, res, next) => {
-  const token = req.headers.authorization.slice(7);
+  const token = req?.headers?.authorization?.slice(7);
   try {
     const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(verifiedToken.userId);
     if (!user) {
       return res.status(404).json({
-        message: "User not found",
+        message: "Logged in user not found",
       });
     }
     delete user.password;
